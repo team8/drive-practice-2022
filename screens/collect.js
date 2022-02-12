@@ -5,13 +5,7 @@ import WheelPicker from "react-native-wheely";
 import config from "../config";
 
 import { initializeApp } from "firebase/app";
-import {
-  getFirestore,
-  setDoc,
-  doc,
-  addDoc,
-  collection,
-} from "firebase/firestore";
+import { getFirestore, setDoc, doc, addDoc, collection, } from "firebase/firestore";
 import { min } from "react-native-reanimated";
 
 const firebaseConfig = {
@@ -35,7 +29,7 @@ export default function Collect() {
   const [seconds, setSeconds] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [inputs, setInputs] = useState([]);
-  const [remaining, setRemaining] = useState([]);
+  const [duration, setDuration] = useState(0)
 
   useEffect(() => {
     var time = [];
@@ -67,61 +61,47 @@ export default function Collect() {
     }
   }
 
+  function updateDuration() {
+      console.log(seconds+" "+minutes)
+      var seconds = 60 * minutes + seconds
+      setDuration(seconds)
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.column}>
         <View style={styles.row}>
-          <TouchableOpacity
-            onPress={() => upper > 0 && setUpper(upper - 1)}
-            style={styles.minusButton}
-          >
+          <TouchableOpacity onPress={() => upper > 0 && setUpper(upper - 1)} style={styles.minusButton} >
             <Text style={styles.text}>-</Text>
           </TouchableOpacity>
           <View>
             <Text style={styles.text}>{upper}</Text>
             <Text>Upper</Text>
           </View>
-          <TouchableOpacity
-            onPress={() => setUpper(upper + 1)}
-            style={styles.plusButton}
-          >
+          <TouchableOpacity onPress={() => setUpper(upper + 1)} style={styles.plusButton} >
             <Text style={styles.text}>+</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.row}>
-          <TouchableOpacity
-            onPress={() => lower > 0 && setLower(lower - 1)}
-            style={styles.minusButton}
-          >
+          <TouchableOpacity onPress={() => lower > 0 && setLower(lower - 1)} style={styles.minusButton} >
             <Text style={styles.text}>-</Text>
           </TouchableOpacity>
           <View>
             <Text style={styles.text}>{lower}</Text>
             <Text>Lower</Text>
           </View>
-          <TouchableOpacity
-            onPress={() => setLower(lower + 1)}
-            style={styles.plusButton}
-          >
+          <TouchableOpacity onPress={() => setLower(lower + 1)} style={styles.plusButton} >
             <Text style={styles.text}>+</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.row}>
-          <TouchableOpacity
-            onPress={() => submit()}
-            style={styles.submitButton}
-          >
+          <TouchableOpacity onPress={() => submit()} style={styles.submitButton} >
             <Text>Submit</Text>
           </TouchableOpacity>
         </View>
       </View>
       <View style={styles.column}>
-        <CountdownCircleTimer
-          isPlaying={isPlaying}
-          duration={60 * minutes + seconds}
-          colors={["#004777", "#F7B801", "#A30000", "#A30000"]}
-          colorsTime={[7, 5, 2, 0]}
-        >
+        <CountdownCircleTimer isPlaying={isPlaying} duration={duration} colors={["#004777", "#F7B801", "#A30000", "#A30000"]} colorsTime={[7, 5, 2, 0]} >
           {({ remainingTime }) => <Text>{remainingTime}</Text>}
         </CountdownCircleTimer>
 
@@ -130,34 +110,17 @@ export default function Collect() {
         ) : (
           <View style={styles.picker}>
             <View style={styles.timer}>
-              <WheelPicker
-                options={inputs}
-                selected={minutes}
-                itemStyle={{}}
-                itemTextStyle={{}}
-                onChange={(num) => setMinutes(num)}
-              />
+              <WheelPicker options={inputs} selected={minutes} itemStyle={{}} itemTextStyle={{}} onChange={(num) => setMinutes(num)} />
               <Text>Minutes</Text>
             </View>
             <View style={styles.timer}>
-              <WheelPicker
-                options={inputs}
-                selected={minutes}
-                itemStyle={{}}
-                itemTextStyle={{}}
-                onChange={(num) => setSeconds(num)}
-              />
+              <WheelPicker options={inputs} selected={minutes} itemStyle={{}} itemTextStyle={{}} onChange={(num) => setSec(num)} />
               <Text>Seconds</Text>
             </View>
           </View>
         )}
         <View>
-          <TouchableOpacity
-            style={[styles.submitButton, { marginTop: 10 }]}
-            onPress={() => {
-              toggle();
-            }}
-          >
+          <TouchableOpacity style={[styles.submitButton, { marginTop: 10 }]} onPress={() => { toggle(); }}>
             <Text>{isPlaying ? "Stop" : "Start"}</Text>
           </TouchableOpacity>
         </View>
