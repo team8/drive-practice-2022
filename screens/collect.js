@@ -5,7 +5,6 @@ import { initializeApp } from "firebase/app";
 import { getFirestore, setDoc, doc, addDoc, collection, } from "firebase/firestore";
 import {Stopwatch, Timer} from 'react-native-stopwatch-timer';
 
-
 const firebaseConfig = {
   apiKey: "AIzaSyAynIjdW6UERmm6ebLOpQz4ZOrYflSRA0g",
   authDomain: "driveteam-2022.firebaseapp.com",
@@ -23,8 +22,28 @@ const firestore = getFirestore();
 export default function Collect() {
   const [upper, setUpper] = useState(0);
   const [lower, setLower] = useState(0);
+  const [time, setTime] = useState(0);
+  const [upperPerMinute, setUpperPerMinute] = useState(0);
+  const [lowerPerMinute, setLowerPerMinute] = useState(0);
   const [isStopwatchStart, setIsStopwatchStart] = useState(false);
   const [resetStopwatch, setResetStopwatch] = useState(false);
+
+  const getFormattedTime = (stopwatchTime) => {
+    setTime(stopwatchTime);
+    // let match = String(time).match(/(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)/);
+    // work on regex later
+    let seconds = String(time).substring(6, 8);
+    let minutes = String(time).substring(3, 5);
+    // don't think we'll ever get an hour
+    minutes += (seconds / 60);
+    let upperPerMin = upper / minutes;
+    let lowerPerMin = lower / minutes;
+    Math.round(10*upperPerMin)/10;
+    Math.round(10*lowerPerMin)/10;
+    setUpperPerMinute(upperPerMin);
+    setLowerPerMinute(lowerPerMin);
+
+  };
 
   const submit = async () => {
     var today = new Date();
@@ -35,6 +54,9 @@ export default function Collect() {
     await addDoc(collection(firestore, today), {
       upper: upper,
       lower: lower,
+      time: time,
+      upperPerMinute: upperPerMinute,
+      lowerPerMinute: lowerPerMinute,
     });
     setUpper(0);
     setLower(0);
@@ -85,7 +107,8 @@ export default function Collect() {
             //To reset
             options={options}
             //options for the styling
-
+            getTime={getFormattedTime}
+            //get time
           />
           <TouchableHighlight
             onPress={() => {

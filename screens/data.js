@@ -19,7 +19,7 @@ export default function Data() {
                     var obj = doc.data();
                     obj.date = `0${i}-${j}-2022`;
                     d.push(obj)
-                  });
+                });
             }
         };
         setData(d)
@@ -27,43 +27,57 @@ export default function Data() {
 
     return (
         <View style={styles.container}>
-            <View style={styles.col}>
-                <Text style={{marginBottom: 2 }}>date</Text>
-                {data.map((game, i) => (
-                    <View style={ i % 2 == 0 && {backgroundColor: "#DBDBDB", width: "400%", justifyContent: "center", alignItems: "center", padding: 2}}>
-                        <Text>{game.date}</Text>
-                    </View>
-                ))}
-            </View>
-            <View style={styles.col}>
-                <Text style={{marginBottom: 2 }}>upper</Text>
-                {data.map((game, i) => (
-                    <View style={ i % 2 == 0 && {backgroundColor: "#DBDBDB", width: "400%", justifyContent: "center", alignItems: "center", padding: 2}}>
-                        <Text>{game.upper}</Text>
-                    </View>
-                ))}
-            </View>
-            <View style={styles.col}>
-                <Text style={{marginBottom: 2 }}>lower</Text>
-                {data.map((game, i) => (
-                    <View style={ i % 2 == 0 && {backgroundColor: "#DBDBDB", width: "400%", justifyContent: "center", alignItems: "center", padding: 2}}>
-                        <Text>{game.lower}</Text>
-                    </View>
-                ))}
-            </View>
-            {/* <View style={styles.row}>
-                <Text>Date</Text>
-                <Text>Upper</Text>
-                <Text>Lower</Text>
-            </View>
-            {data.map((game, i) => (
-                <View key={i} style={styles.row}>
-                    <Text>{game.date}</Text>
-                    <Text>{game.upper}</Text>
-                    <Text>{game.lower}</Text>
+            <View style={styles.row}>
+                <View style={styles.col}>
+                    <Text style={{ marginBottom: 2 }}>Date</Text>
+                    {data.map((game, i) => (
+                        <View style={i % 2 == 0 && styles.data}>
+                            <Text>{game.date}</Text>
+                        </View>
+                    ))}
                 </View>
-            ))
-            } */}
+                <View style={styles.col}>
+                    <Text style={{ marginBottom: 2 }}>Upper</Text>
+                    {data.map((game, i) => (
+                        <View style={i % 2 == 0 && styles.data}>
+                            <Text>{game.upper}</Text>
+                        </View>
+                    ))}
+                </View>
+                <View style={styles.col}>
+                    <Text style={{ marginBottom: 2 }}>Lower</Text>
+                    {data.map((game, i) => (
+                        <View style={i % 2 == 0 && styles.data}>
+                            <Text>{game.lower}</Text>
+                        </View>
+                    ))}
+                </View>
+                <View style={styles.col}>
+                    <Text style={{ marginBottom: 2 }}>Upper per minute</Text>
+                    {data.map((game, i) => (
+                        <View style={i % 2 == 0 && styles.data}>
+                            <Text>{game.upperPerMinute}</Text>
+                        </View>
+                    ))}
+                </View>
+                <View style={styles.col}>
+                    <Text style={{ marginBottom: 2 }}>Lower per minute</Text>
+                    {data.map((game, i) => (
+                        <View style={i % 2 == 0 && styles.data}>
+                            <Text>{game.lowerPerMinute}</Text>
+                        </View>
+                    ))}
+                </View>
+                <View style={styles.col}>
+                    <Text style={{ marginBottom: 2 }}>Time</Text>
+                    {data.map((game, i) => (
+                        <View style={i % 2 == 0 && styles.data}>
+                            <Text>{game.time}</Text>
+                        </View>
+                        
+                    ))}
+                </View>
+            </View>
         </View>
     )
 }
@@ -76,6 +90,18 @@ const styles = StyleSheet.create({
     },
     col: {
         justifyContent: "center",
-        alignItems: "center"
+        alignItems: "center", 
+        flex: 0.20
+    },
+    row: {
+        flex: 1,
+        flexDirection: 'row'
+    },
+    data: {
+        backgroundColor: "#DBDBDB", 
+        width: "100%", 
+        justifyContent: "center", 
+        alignItems: "center", 
+        padding: 2,
     }
 })
