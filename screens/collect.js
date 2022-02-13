@@ -25,10 +25,8 @@ export default function Collect() {
   const [lower, setLower] = useState(0);
   const [isStopwatchStart, setIsStopwatchStart] = useState(false);
   const [resetStopwatch, setResetStopwatch] = useState(false);
-  const [t, setT] = useState(0)
 
   const submit = async () => {
-    alert(t);
     var today = new Date();
     var dd = String(today.getDate()).padStart(2, "0");
     var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
@@ -38,6 +36,8 @@ export default function Collect() {
       upper: upper,
       lower: lower,
     });
+    setUpper(0);
+    setLower(0);
   };
 
   return (
