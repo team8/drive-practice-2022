@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
-import WheelPicker from "react-native-wheely";
-import config from "../config";
+import { View, Text, TouchableOpacity, StyleSheet, TouchableHighlight } from "react-native";
 
 import { initializeApp } from "firebase/app";
-import { getFirestore, setDoc, doc, addDoc, collection } from "firebase/firestore";
-import { min } from "react-native-reanimated";
+import { getFirestore, setDoc, doc, addDoc, collection, } from "firebase/firestore";
+import {Stopwatch, Timer} from 'react-native-stopwatch-timer';
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyAynIjdW6UERmm6ebLOpQz4ZOrYflSRA0g",
@@ -25,21 +23,12 @@ const firestore = getFirestore();
 export default function Collect() {
   const [upper, setUpper] = useState(0);
   const [lower, setLower] = useState(0);
-  const [minutes, setMinutes] = useState(0);
-  const [seconds, setSeconds] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [inputs, setInputs] = useState([]);
-  const [duration, setDuration] = useState(0)
-
-  useEffect(() => {
-    var time = [];
-    for (var i = 0; i < 60; i++) {
-      time.push(i);
-    }
-    setInputs(time);
-  }, []);
+  const [isStopwatchStart, setIsStopwatchStart] = useState(false);
+  const [resetStopwatch, setResetStopwatch] = useState(false);
+  const [t, setT] = useState(0)
 
   const submit = async () => {
+    alert(t);
     var today = new Date();
     var dd = String(today.getDate()).padStart(2, "0");
     var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
@@ -51,113 +40,89 @@ export default function Collect() {
     });
   };
 
-  async function toggle() {
-    if (isPlaying) {
-      await setDuration(0)
-      setMinutes(0)
-      setSeconds(0)
-      setIsPlaying(false);
-      console.log("duration"+duration)
-    } else {
-      setIsPlaying(true);
-    }
-  }
-
-  async function updateSec(num) {
-    setDuration(60 * minutes + num)
-    console.log(duration)
-    setSeconds(num)
-  }
-
-  async function updateMin(num) {
-    setDuration(60 * num + seconds)
-    console.log(duration)
-    setMinutes(num)
-  }
-
   return (
     <View style={styles.container}>
       <View style={styles.column}>
         <View style={styles.row}>
-          <TouchableOpacity onPress={() => upper > 0 && setUpper(upper - 1)} style={styles.minusButton}>
+          <TouchableOpacity onPress={() => upper > 0 && setUpper(upper - 1)} style={styles.minusButton} >
             <Text style={styles.text}>-</Text>
           </TouchableOpacity>
           <View>
             <Text style={styles.text}>{upper}</Text>
             <Text>Upper</Text>
           </View>
-          <TouchableOpacity onPress={() => setUpper(upper + 1)} style={styles.plusButton}>
+          <TouchableOpacity onPress={() => setUpper(upper + 1)} style={styles.plusButton} >
             <Text style={styles.text}>+</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.row}>
-          <TouchableOpacity onPress={() => lower > 0 && setLower(lower - 1)} style={styles.minusButton}>
+          <TouchableOpacity onPress={() => lower > 0 && setLower(lower - 1)} style={styles.minusButton} >
             <Text style={styles.text}>-</Text>
           </TouchableOpacity>
           <View>
             <Text style={styles.text}>{lower}</Text>
             <Text>Lower</Text>
           </View>
-          <TouchableOpacity onPress={() => setLower(lower + 1)} style={styles.plusButton}>
+          <TouchableOpacity onPress={() => setLower(lower + 1)} style={styles.plusButton} >
             <Text style={styles.text}>+</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.row}>
-          <TouchableOpacity onPress={() => submit()} style={styles.submitButton}>
+          <TouchableOpacity onPress={() => submit()} style={styles.submitButton} >
             <Text>Submit</Text>
           </TouchableOpacity>
         </View>
       </View>
       <View style={styles.column}>
-        <CountdownCircleTimer
-          isPlaying={isPlaying}
-          duration={duration}
-          colors={["#004777", "#F7B801", "#A30000", "#A30000"]}
-          colorsTime={[7, 5, 2, 0]}
-        >
-          {({ remainingTime }) => <Text>{remainingTime}</Text>}
-        </CountdownCircleTimer>
+      <View style={styles.c}>
+        <View style={styles.sectionStyle}>
+          <Stopwatch
+            laps
+            msecs
+            start={isStopwatchStart}
+            //To start
+            reset={resetStopwatch}
+            //To reset
+            options={options}
+            //options for the styling
 
-        {isPlaying ? (
-          <View></View>
-        ) : (
-          <View style={styles.picker}>
-            <View style={styles.timer}>
-              <WheelPicker
-                options={inputs}
-                selected={minutes}
-                itemStyle={{}}
-                itemTextStyle={{}}
-                onChange={(num) => updateMin(num)}
-              />
-              <Text>Minutes</Text>
-            </View>
-            <View style={styles.timer}>
-              <WheelPicker
-                options={inputs}
-                selected={minutes}
-                itemStyle={{}}
-                itemTextStyle={{}}
-                onChange={(num) => updateSec(num)}
-              />
-              <Text>Seconds</Text>
-            </View>
-          </View>
-        )}
-        <View>
-          <TouchableOpacity
-            style={[styles.submitButton, { marginTop: 10 }]}
+          />
+          <TouchableHighlight
             onPress={() => {
-              toggle();
-            }}
-          >
-            <Text>{isPlaying ? "Stop" : "Start"}</Text>
-          </TouchableOpacity>
+              setIsStopwatchStart(!isStopwatchStart);
+              setResetStopwatch(false);
+            }}>
+            <Text style={styles.buttonText}>
+              {!isStopwatchStart ? 'START' : 'STOP'}
+            </Text>
+          </TouchableHighlight>
+          <TouchableHighlight
+            onPress={() => {
+              setIsStopwatchStart(false);
+              setResetStopwatch(true);
+            }}>
+            <Text style={styles.buttonText}>RESET</Text>
+          </TouchableHighlight>
         </View>
+      </View>
       </View>
     </View>
   );
 }
+
+const options = {
+    container: {
+      backgroundColor: '#FF0000',
+      padding: 5,
+      borderRadius: 5,
+      width: 220,
+    },
+    text: {
+      fontSize: 30,
+      color: '#FFF',
+      marginLeft: 7,
+    }
+  };
 
 const styles = StyleSheet.create({
   container: {
@@ -175,6 +140,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     height: "30%",
+  },
+  rowRight: {
+    flexDirection: "row",
+    alignItems: "center",
+    height: "30%",
+    marginTop: 50,
+    justifyContent: "center",
+    width: "100%",
   },
   minusButton: {
     backgroundColor: "#eb4034",
@@ -202,16 +175,32 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  startButton: {
+      marginTop: 100,
+  },
   text: {
     fontSize: 60,
   },
-  picker: {
-    display: "flex",
-    flexDirection: "row",
+  c: {
+    flex: 1,
+    padding: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  timer: {
-    display: "flex",
-    flexDirection: "column",
-    margin: 5,
+  title: {
+    textAlign: 'center',
+    fontSize: 20,
+    fontWeight: 'bold',
+    padding: 20,
+  },
+  sectionStyle: {
+    flex: 1,
+    marginTop: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonText: {
+    fontSize: 20,
+    marginTop: 10,
   },
 });
