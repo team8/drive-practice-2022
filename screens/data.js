@@ -56,7 +56,7 @@ export default function Data() {
                     <Text style={{ marginBottom: 2 }}>Upper per minute</Text>
                     {data.map((game, i) => (
                         <View style={i % 2 == 0 && styles.data}>
-                            <Text>{game.upperPerMinute}</Text>
+                            <Text>{game.upperPerMinute.toFixed(2)}</Text>
                         </View>
                     ))}
                 </View>
@@ -64,7 +64,7 @@ export default function Data() {
                     <Text style={{ marginBottom: 2 }}>Lower per minute</Text>
                     {data.map((game, i) => (
                         <View style={i % 2 == 0 && styles.data}>
-                            <Text>{game.lowerPerMinute}</Text>
+                            <Text>{game.lowerPerMinute.toFixed(2)}</Text>
                         </View>
                     ))}
                 </View>

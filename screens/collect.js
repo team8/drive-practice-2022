@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, TouchableHighlight } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, TouchableHighlight, TextInput, KeyboardAvoidingView } from "react-native";
 
 import { initializeApp } from "firebase/app";
 import { getFirestore, setDoc, doc, addDoc, collection, } from "firebase/firestore";
@@ -23,33 +23,17 @@ export default function Collect() {
   const [upper, setUpper] = useState(0);
   const [lower, setLower] = useState(0);
   const [time, setTime] = useState(0);
-  const [upperPerMinute, setUpperPerMinute] = useState(0);
-  const [lowerPerMinute, setLowerPerMinute] = useState(0);
   const [isStopwatchStart, setIsStopwatchStart] = useState(false);
   const [resetStopwatch, setResetStopwatch] = useState(false);
-
-  const getFormattedTime = (stopwatchTime) => {
-    setTime(stopwatchTime);
-    // let match = String(time).match(/(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)/);
-    // work on regex later
-    let seconds = String(time).substring(6, 8);
-    let minutes = String(time).substring(3, 5);
-    // don't think we'll ever get an hour
-    minutes += (seconds / 60);
-    let upperPerMin = upper / minutes;
-    let lowerPerMin = lower / minutes;
-    Math.round(10*upperPerMin)/10;
-    Math.round(10*lowerPerMin)/10;
-    setUpperPerMinute(upperPerMin);
-    setLowerPerMinute(lowerPerMin);
-
-  };
 
   const submit = async () => {
     var today = new Date();
     var dd = String(today.getDate()).padStart(2, "0");
     var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
     var yyyy = today.getFullYear();
+    var minutes = parseFloat(time[0]) + parseFloat(time.slice(-2)/60)
+    var upperPerMinute = upper/minutes;
+    var lowerPerMinute = lower/minutes;
     today = mm + "-" + dd + "-" + yyyy;
     await addDoc(collection(firestore, today), {
       upper: upper,
@@ -60,10 +44,13 @@ export default function Collect() {
     });
     setUpper(0);
     setLower(0);
+    setIsStopwatchStart(false);
+    setResetStopwatch(true);
+    setTime("");
   };
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.container}>
       <View style={styles.column}>
         <View style={styles.row}>
           <TouchableOpacity onPress={() => upper > 0 && setUpper(upper - 1)} style={styles.minusButton} >
@@ -90,6 +77,7 @@ export default function Collect() {
           </TouchableOpacity>
         </View>
         <View style={styles.row}>
+          <TextInput style={{ height: 40, borderColor: 'gray', borderWidth: 1, placeholderTextColor: 'gray', width: 100, marginRight: 5 }} value={time} onChangeText={text => setTime(text)}/>
           <TouchableOpacity onPress={() => submit()} style={styles.submitButton} >
             <Text>Submit</Text>
           </TouchableOpacity>
@@ -107,8 +95,6 @@ export default function Collect() {
             //To reset
             options={options}
             //options for the styling
-            getTime={getFormattedTime}
-            //get time
           />
           <TouchableHighlight
             onPress={() => {
@@ -129,7 +115,7 @@ export default function Collect() {
         </View>
       </View>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
