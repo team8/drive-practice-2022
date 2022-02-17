@@ -43,7 +43,7 @@ export default function Collect() {
       time: time,
       upperPerMinute: upperPerMinute,
       lowerPerMinute: lowerPerMinute,
-      text: text
+      text: text ? text : "--"
     });
     setUpper(0);
     setLower(0);
@@ -121,6 +121,7 @@ export default function Collect() {
             <NotesInput
               multiline
               numberOfLines={4}
+              value={text}
               onChangeText={text => onChangeText(text)}
               placeholder="Notes (optional)"
               style={{ padding: 10 }}
