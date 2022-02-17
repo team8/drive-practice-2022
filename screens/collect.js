@@ -3,7 +3,8 @@ import { View, Text, TouchableOpacity, StyleSheet, TouchableHighlight, TextInput
 
 import { initializeApp } from "firebase/app";
 import { getFirestore, setDoc, doc, addDoc, collection, } from "firebase/firestore";
-import {Stopwatch, Timer} from 'react-native-stopwatch-timer';
+import { Stopwatch, Timer } from 'react-native-stopwatch-timer';
+import NotesInput from "../components/TextInput";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAynIjdW6UERmm6ebLOpQz4ZOrYflSRA0g",
@@ -25,15 +26,16 @@ export default function Collect() {
   const [time, setTime] = useState(0);
   const [isStopwatchStart, setIsStopwatchStart] = useState(false);
   const [resetStopwatch, setResetStopwatch] = useState(false);
+  const [text, onChangeText] = useState("");
 
   const submit = async () => {
     var today = new Date();
     var dd = String(today.getDate()).padStart(2, "0");
     var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
     var yyyy = today.getFullYear();
-    var minutes = parseFloat(time[0]) + parseFloat(time.slice(-2)/60)
-    var upperPerMinute = upper/minutes;
-    var lowerPerMinute = lower/minutes;
+    var minutes = parseFloat(time[0]) + parseFloat(time.slice(-2) / 60)
+    var upperPerMinute = upper / minutes;
+    var lowerPerMinute = lower / minutes;
     today = mm + "-" + dd + "-" + yyyy;
     await addDoc(collection(firestore, today), {
       upper: upper,
@@ -41,12 +43,14 @@ export default function Collect() {
       time: time,
       upperPerMinute: upperPerMinute,
       lowerPerMinute: lowerPerMinute,
+      text: text
     });
     setUpper(0);
     setLower(0);
     setIsStopwatchStart(false);
     setResetStopwatch(true);
     setTime("");
+    onChangeText("");
   };
 
   return (
@@ -77,14 +81,13 @@ export default function Collect() {
           </TouchableOpacity>
         </View>
         <View style={styles.row}>
-          <TextInput style={{ height: 40, borderColor: 'gray', borderWidth: 1, placeholderTextColor: 'gray', width: 100, marginRight: 5 }} value={time} onChangeText={text => setTime(text)}/>
+          <TextInput style={{ height: 40, borderColor: 'gray', borderWidth: 1, placeholderTextColor: 'gray', width: 100, marginRight: 5 }} value={time} onChangeText={text => setTime(text)} />
           <TouchableOpacity onPress={() => submit()} style={styles.submitButton} >
             <Text>Submit</Text>
           </TouchableOpacity>
         </View>
       </View>
       <View style={styles.column}>
-      <View style={styles.c}>
         <View style={styles.sectionStyle}>
           <Stopwatch
             laps
@@ -94,7 +97,7 @@ export default function Collect() {
             reset={resetStopwatch}
             //To reset
             options={options}
-            //options for the styling
+          //options for the styling
           />
           <TouchableHighlight
             onPress={() => {
@@ -113,25 +116,35 @@ export default function Collect() {
             <Text style={styles.buttonText}>RESET</Text>
           </TouchableHighlight>
         </View>
-      </View>
+        <View style={styles.sectionStyle}>
+          <View style={styles.input}>
+            <NotesInput
+              multiline
+              numberOfLines={4}
+              onChangeText={text => onChangeText(text)}
+              placeholder="Notes (optional)"
+              style={{ padding: 10 }}
+            />
+          </View>
+        </View>
       </View>
     </KeyboardAvoidingView>
   );
 }
 
 const options = {
-    container: {
-      backgroundColor: '#FF0000',
-      padding: 5,
-      borderRadius: 5,
-      width: 220,
-    },
-    text: {
-      fontSize: 30,
-      color: '#FFF',
-      marginLeft: 7,
-    }
-  };
+  container: {
+    backgroundColor: '#FF0000',
+    padding: 5,
+    borderRadius: 5,
+    width: 220,
+  },
+  text: {
+    fontSize: 30,
+    color: '#FFF',
+    marginLeft: 7,
+  }
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -185,16 +198,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   startButton: {
-      marginTop: 100,
+    marginTop: 100,
   },
   text: {
     fontSize: 60,
-  },
-  c: {
-    flex: 1,
-    padding: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   title: {
     textAlign: 'center',
@@ -203,13 +210,21 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   sectionStyle: {
-    flex: 1,
-    marginTop: 32,
+    flex: 0.5,
     alignItems: 'center',
+    padding: 10,
     justifyContent: 'center',
   },
   buttonText: {
     fontSize: 20,
     marginTop: 10,
+  },
+  input: {
+    flex: 1,
+    width: 250,
+    marginBottom: 75,
+    flexDirection: 'row',
+    borderWidth: 1,
+    padding: 10,
   },
 });

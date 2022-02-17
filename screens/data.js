@@ -77,6 +77,15 @@ export default function Data() {
                         
                     ))}
                 </View>
+                <View style={styles.col}>
+                    <Text style={{ marginBottom: 2 }}>Notes</Text>
+                    {data.map((game, i) => (
+                        <View style={i % 2 == 0 && styles.data}>
+                            <Text>{game.text}</Text>
+                        </View>
+                        
+                    ))}
+                </View>
             </View>
         </View>
     )
