@@ -18,10 +18,14 @@ export default function Data() {
                     // doc.data() is never undefined for query doc snapshots
                     var obj = doc.data();
                     obj.date = `0${i}-${j}-2022`;
+                    obj.when = obj.when
                     d.push(obj)
                 });
             }
         };
+        d.sort(function(x, y){
+            return x.when - y.when;
+        })
         setData(d)
     }, [])
 

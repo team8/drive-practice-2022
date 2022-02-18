@@ -43,7 +43,8 @@ export default function Collect() {
       time: time,
       upperPerMinute: upperPerMinute,
       lowerPerMinute: lowerPerMinute,
-      text: text ? text : "--"
+      text: text ? text : "--",
+      when: new Date().getTime()
     });
     setUpper(0);
     setLower(0);
